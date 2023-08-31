@@ -75,11 +75,21 @@ const Users = () => {
   const fileExtension = '.xlsx';
 
   const exportToCSV = () => {
-    users.map((user) => {
+    const fixedUsers = users.map((user, index) => {
+      user.no = index + 1;
       user.createdAt = convertDate(user.createdAt);
       user.updatedAt = convertDate(user.updatedAt);
+      delete user.id;
+      return {
+        no: user.no,
+        name: user.name,
+        username: user.username,
+        nohp: user.nohp,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+      };
     });
-    const ws = XLSX.utils.json_to_sheet(users);
+    const ws = XLSX.utils.json_to_sheet(fixedUsers);
     const wb = { Sheets: { data: ws }, SheetNames: ['data'] };
     const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
     const data = new Blob([excelBuffer], { type: fileType });
